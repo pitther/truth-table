@@ -5,9 +5,11 @@ String.prototype.replaceAll = function(search, replacement) {
     return target.split(search).join(replacement);
 };
 
+
 class UserInterface{
     constructor() {
         this.inputExpressionElement = document.getElementById("inputExpression");
+        this.inputTipElement = document.getElementById("tipInput");
     }
     onMakeTable(){
         let val = this.inputExpressionElement.value.toUpperCase();
@@ -28,6 +30,25 @@ class UserInterface{
                 ele.className = ele.className.replace(cls,"");
             }
     }
+    onHint(){
+        if ( this.inputTipElement.className.indexOf("is-valid") > -1){
+            this.removeClass(this.inputTipElement,"is-valid");
+        } else {
+            this.addClass(this.inputTipElement,"is-valid");
+            let tip = "List of operations:";
+
+            tip += "<br><b>"+CORE.dict["NOT"]+"</b> - Negation (NOT)";
+            tip += "<br><b>"+CORE.dict["OR"]+"</b> - Disjunction (OR)";
+            tip += "<br><b>"+CORE.dict["AND"]+"</b> - Conjunction (AND)";
+            tip += "<br><b>"+CORE.dict["IMP"]+"</b> - Implication (IMPLY)";
+            tip += "<br><b>"+CORE.dict["EQ"]+"</b> - Equality (EQ,XNOR)";
+
+            tip += "<br><br>Available characters:<br>"+CORE.alphabet;
+            document.getElementById("tipDiv").innerHTML = tip;
+
+        }
+
+    }
     addClass(ele,cls){
             ele.className += " "+ cls;
     }
@@ -40,7 +61,7 @@ class UserInterface{
     generateTableHead(heads){
         let str = "<thead ><tr>"
         for (let i = 0; i < heads.length; i++){
-            str += `<th class='text-primary' style="text-align: center" scope="col">${heads[i]}</th>`;
+            str += `<th class='text-info' style="text-align: center" scope="col">${heads[i]}</th>`;
         }
         str += "</tr></thead>";
         this.appendToTable(str);
@@ -64,14 +85,16 @@ class Core{
     constructor(){
         this.letterAlphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P",
             "Q", "R", "S", "T", "U", "W", "X", "Y", "Z"];
-        this.alphabet = ["<->","->","-","^","v","V","(",")"];
+        this.alphabet = ["(",")"];
         this.dict = {
-            "NOT": "-",
-            "OR": "V",
-            "AND": "^",
-            "IMP": "->",
-            "EQ": "<->"
+            "NOT": "!",
+            "OR": "||",
+            "AND": "&&",
+            "IMP": ">",
+            "EQ": "<>"
         };
+        this.alphabet.push(this.dict["OR"],this.dict["AND"],this.dict["EQ"],this.dict["IMP"],this.dict["NOT"]);
+        console.log(this.alphabet);
         this.alphabet = this.alphabet.concat(this.letterAlphabet);
     }
     proceedExpression(exp){
@@ -118,13 +141,7 @@ class Core{
             }
         }
         console.log(str);
-        /*
-        *  "NOT": "-",
-            "OR": "V",
-            "AND": "^",
-            "IMP": "->",
-            "EQ": "<->"
-        * */
+
         let LogicArr = [
             [this.dict["NOT"]+"1", 0], [this.dict["NOT"]+"0", 1],
             ["1"+this.dict["OR"]+"1", 1], ["1"+this.dict["OR"]+"0", 1], ["0"+this.dict["OR"]+"1", 1], ["0"+this.dict["OR"]+"0", 0],
@@ -155,8 +172,6 @@ class Core{
         }
 
     }
-
-
     replaceLinks(parsed,i){
         let str = parsed[i],
             replaced = false;
@@ -204,6 +219,7 @@ class Core{
                 exp = exp.replace(this.alphabet[i],"");
             }
         }
+        console.log(exp);
         if (exp.length > 0){
             let chars = exp;
             chars = chars.split("");
@@ -221,4 +237,6 @@ class Core{
 window.onload = function () {
     UI = new UserInterface();
     CORE = new Core();
-};
+
+    };
+

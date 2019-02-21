@@ -12,6 +12,7 @@
 
 </head>
 <script src="js/jquery-3.3.1.min.js"></script>
+<script src="js/tether.js"></script>
 
 <script src="js/bootstrap.js"></script>
 <script src="js/patentesis.js"></script>
@@ -23,11 +24,19 @@
     <a class="navbar-brand" href="#">Truth-table</a>
     <form class="form-inline " action="javascript:void(0);">
 
-        <input value="(avbvc)->(avbvcv(a->b))" id="inputExpression" class="form-control mr-sm-2" type="logic expression" placeholder="Logical expression" aria-label="Make table">
-        <div id="invalidReasonDiv" class="invalid-tooltip"></div>
 
-        <button class="btn btn-outline-primary my-2 my-sm-0" onclick="UI.onMakeTable()">Make table</button>
+        <input value="A&&B||C" id="inputExpression" class="form-control mr-sm-2" placeholder="Logical expression" aria-label="Make table">
+        <div id="invalidReasonDiv" class="invalid-tooltip"></div>
+        <button class="btn btn-outline-info my-2 my-sm-0" onclick="UI.onMakeTable()">Make table</button>
+
     </form>
+    <form class="form-inline " action="javascript:void(0);">
+        <input id="tipInput" style="display: none" class="form-control mr-sm-2">
+        <div id="tipDiv" class="valid-tooltip">123</div>
+        <button class="btn btn-outline-info my-2 my-sm-0" onclick="UI.onHint()">?</button>
+    </form>
+
+
     <a class="navbar-brand" href="#"><span style="font-size: 15px; color: darkgrey">@peterovseychuk</span></a>
 </nav>
 <div class="table-container">
@@ -35,5 +44,6 @@
 
     </table>
 </div>
+
 </body>
 </html>
