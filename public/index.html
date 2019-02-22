@@ -20,29 +20,44 @@
 
 <body>
 
-<nav class="navbar navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">Truth-table</a>
+<nav id="nav" class="navbar navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">Truth-table <sub style="font-size: 15px; opacity: .2">@peterovsiichuk</sub></a>
     <form class="form-inline " action="javascript:void(0);">
 
 
-        <input value="A&&B||C" id="inputExpression" class="form-control mr-sm-2" placeholder="Logical expression" aria-label="Make table">
+        <input style="max-width: 300px; width: 60em;" value="(A&&B)<>(A||C)>>(A>>C)<>(A<>B)" id="inputExpression" class="form-control mr-sm-2" placeholder="Logical expression" aria-label="Make table">
         <div id="invalidReasonDiv" class="invalid-tooltip"></div>
         <button class="btn btn-outline-info my-2 my-sm-0" onclick="UI.onMakeTable()">Make table</button>
 
     </form>
     <form class="form-inline " action="javascript:void(0);">
+
+    </form>
+
+    <form class="form-inline " action="javascript:void(0);">
         <input id="tipInput" style="display: none" class="form-control mr-sm-2">
         <div id="tipDiv" class="valid-tooltip">123</div>
-        <button class="btn btn-outline-info my-2 my-sm-0" onclick="UI.onHint()">?</button>
+        <button class="btn btn-outline-info my-2 my-sm-0 sets" onclick="UI.onHint()">?</button>
+        <button style="" id="customizationButton" class="btn btn-outline-success my-2 my-sm-0 sets" onclick="UI.onCustomization()">Settings</button>
+
+        <button style="display: none;" id="stepsButton" class="btn btn-outline-primary my-2 my-sm-0 sets" onclick="UI.onViewSteps()">Show steps</button>
+        <button style="display: none;" id="detailedOperationsButton" class="btn btn-outline-primary my-2 my-sm-0 sets" onclick="UI.onDetailed()">Detailed</button>
+
+        <button style="display: none;" id="replaceOperationsButton" class="btn btn-outline-warning my-2 my-sm-0 sets" onclick="UI.onReplaceOperations()">Namings</button>
+        <button style="display: none; color:#ffc107" id="colorizeOperationsButton" class="btn btn-outline-warning my-2 my-sm-0 sets" onclick="UI.onColorizeOperations()">Decolorize</button>
+
+        <button id="themeButton" class="btn btn-outline-info my-2 my-sm-0 sets" onclick="UI.onChangeTheme()">Light theme</button>
     </form>
 
 
-    <a class="navbar-brand" href="#"><span style="font-size: 15px; color: darkgrey">@peterovseychuk</span></a>
+    <!--a class="navbar-brand" href="#"><span style="font-size: 15px; color: darkgrey">@peterovseychuk</span></a-->
 </nav>
 <div class="table-container">
+
     <table id="table" class="table table-bordered table-dark">
 
     </table>
+
 </div>
 
 </body>

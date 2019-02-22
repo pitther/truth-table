@@ -3,13 +3,16 @@ body{
 }
 
 #invalidReasonDiv {
-
-
+    word-break: break-all;
     -webkit-transition: all 0.5s ease; /* Safari */
     transition: all 0.5s ease;
 }
 
 #tipDiv {
-
+    word-break: break-all;
     background-color: #17a2b8;
+}
+
+.sets{
+    margin-left: 10px;
 }

@@ -8,6 +8,7 @@ String.prototype.replaceAll = function(search, replacement) {
 
 class UserInterface{
     constructor() {
+        this.castomization = false;
         this.inputExpressionElement = document.getElementById("inputExpression");
         this.inputTipElement = document.getElementById("tipInput");
     }
@@ -16,6 +17,7 @@ class UserInterface{
         this.inputExpressionElement.value = val;
         CORE.proceedExpression(val);
     }
+
     inputError(reason){
         this.removeClass(this.inputExpressionElement,"is-valid");
         this.addClass(this.inputExpressionElement,"is-invalid");
@@ -30,6 +32,94 @@ class UserInterface{
                 ele.className = ele.className.replace(cls,"");
             }
     }
+    onDetailed(){
+        CORE.detailedOperations = !CORE.detailedOperations;
+        this.onMakeTable();
+        if (!CORE.detailedOperations){
+            document.getElementById("detailedOperationsButton").innerHTML = "Detailed";
+        } else {
+            document.getElementById("detailedOperationsButton").innerHTML = "Simple";
+        }
+    }
+    onColorizeOperations(){
+        CORE.colorizeSteps = !CORE.colorizeSteps;
+        this.onMakeTable();
+        if (!CORE.colorizeSteps){
+            document.getElementById("colorizeOperationsButton").innerHTML = "Colorize";
+            document.getElementById("colorizeOperationsButton").style.color = "#dc3545";
+        } else {
+            document.getElementById("colorizeOperationsButton").innerHTML = "Decolorize";
+            document.getElementById("colorizeOperationsButton").style.color = "#ffc107";
+        }
+    }
+    onCustomization(){
+        this.castomization = !this.castomization;
+        if (this.castomization){
+            document.getElementById("stepsButton").style.display = "";
+            document.getElementById("replaceOperationsButton").style.display = "";
+            document.getElementById("colorizeOperationsButton").style.display = "";
+           // document.getElementById("detailedOperationsButton").style.display = "";
+        } else {
+            document.getElementById("stepsButton").style.display = "none";
+            document.getElementById("replaceOperationsButton").style.display = "none";
+            document.getElementById("colorizeOperationsButton").style.display = "none";
+            document.getElementById("detailedOperationsButton").style.display = "none";
+        }
+    }
+    onReplaceOperations(){
+        CORE.replaceOperations = !CORE.replaceOperations;
+        this.onMakeTable();
+        if (CORE.replaceOperations){
+            document.getElementById("replaceOperationsButton").innerHTML = "Symbols";
+        } else {
+            document.getElementById("replaceOperationsButton").innerHTML = "Namings";
+        }
+    }
+    onViewSteps(){
+
+        CORE.showSteps = !CORE.showSteps;
+        this.onMakeTable();
+        if (CORE.showSteps){
+            document.getElementById("stepsButton").innerHTML = "Hide steps";
+            //document.getElementById("replaceOperationsButton").disabled = false;
+            //document.getElementById("replaceOperationsButton").style.display = "";
+            //document.getElementById("colorizeOperationsButton").style.display = "";
+            document.getElementById("detailedOperationsButton").style.display = "";
+        } else {
+            document.getElementById("stepsButton").innerHTML = "Show steps";
+            //document.getElementById("replaceOperationsButton").disabled = true;
+            //document.getElementById("replaceOperationsButton").style.display = "none";
+            //document.getElementById("colorizeOperationsButton").style.display = "none";
+            document.getElementById("detailedOperationsButton").style.display = "none";
+
+        }
+
+    }
+    onChangeTheme(){
+        let navEl = document.getElementById("nav");
+        let tableEl = document.getElementById("table");
+        if ( navEl.className.indexOf("dark") > -1) {
+            this.removeClass(navEl,"navbar-dark");
+            this.removeClass(navEl,"bg-dark");
+            this.addClass(navEl,"navbar-light bg-light");
+            document.getElementById("themeButton").innerHTML = "Dark theme";
+            document.body.style.backgroundColor = "white";
+        } else {
+            this.removeClass(navEl,"navbar-light");
+            this.removeClass(navEl,"bg-light");
+            this.addClass(navEl,"navbar-dark bg-dark");
+            document.getElementById("themeButton").innerHTML = "Light theme";
+            document.body.style.backgroundColor = "#212529";
+        }
+
+        if ( tableEl.className.indexOf("dark") > -1) {
+            this.removeClass(tableEl,"table-dark");
+            this.addClass(tableEl,"table-light");
+        } else {
+            this.removeClass(tableEl,"table-light");
+            this.addClass(tableEl,"table-dark");
+        }
+    }
     onHint(){
         if ( this.inputTipElement.className.indexOf("is-valid") > -1){
             this.removeClass(this.inputTipElement,"is-valid");
@@ -42,6 +132,8 @@ class UserInterface{
             tip += "<br><b>"+CORE.dict["AND"]+"</b> - Conjunction (AND)";
             tip += "<br><b>"+CORE.dict["IMP"]+"</b> - Implication (IMPLY)";
             tip += "<br><b>"+CORE.dict["EQ"]+"</b> - Equality (EQ,XNOR)";
+
+            tip+= "<br><br><b>Use round brackers to set priority!</b>"
 
             tip += "<br><br>Available characters:<br>"+CORE.alphabet;
             document.getElementById("tipDiv").innerHTML = tip;
@@ -83,6 +175,10 @@ class UserInterface{
 
 class Core{
     constructor(){
+        this.detailedOperations = false;
+        this.colorizeSteps = true;
+        this.showSteps = false;
+        this.replaceOperations = false;
         this.letterAlphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P",
             "Q", "R", "S", "T", "U", "W", "X", "Y", "Z"];
         this.alphabet = ["(",")"];
@@ -90,13 +186,14 @@ class Core{
             "NOT": "!",
             "OR": "||",
             "AND": "&&",
-            "IMP": ">",
+            "IMP": ">>",
             "EQ": "<>"
         };
         this.alphabet.push(this.dict["OR"],this.dict["AND"],this.dict["EQ"],this.dict["IMP"],this.dict["NOT"]);
         console.log(this.alphabet);
         this.alphabet = this.alphabet.concat(this.letterAlphabet);
     }
+
     proceedExpression(exp){
         exp = exp.replace(/\s/g,'');
         if (this.checkExpression(exp).length > 0){return;}
@@ -116,7 +213,12 @@ class Core{
             body = inputCombosArr;
 
         for (let i = parsed.length-1; i >= 0; i--){
-            headers.push(this.replaceLinks(parsed,i));
+            if (headers.indexOf(this.replaceLinks(parsed,i)) > -1){
+                continue;
+            } else {
+                headers.push("<span class=''>"+this.replaceOperationsStr(this.replaceLinks(parsed,i),this.replaceOperations)+"</span>");
+            }
+
             for (let j = 0; j < inputCombosArr.length; j++){
                 let res = this.proceedLogicOperation(inputCombosArr[j],this.replaceLinks(parsed,i),variables);
                 if (res == -1){
@@ -125,7 +227,7 @@ class Core{
                 body[j].push(res);
             }
         }
-
+        console.log(body);
         UI.generateTableHead(headers);
         UI.generateTableBody(body);
     }
@@ -141,7 +243,8 @@ class Core{
             }
         }
         console.log(str);
-
+        let step_str = str,
+            rep_step = str;
         let LogicArr = [
             [this.dict["NOT"]+"1", 0], [this.dict["NOT"]+"0", 1],
             ["1"+this.dict["OR"]+"1", 1], ["1"+this.dict["OR"]+"0", 1], ["0"+this.dict["OR"]+"1", 1], ["0"+this.dict["OR"]+"0", 0],
@@ -152,25 +255,89 @@ class Core{
 
         let DEPTH = 20;
         for (let j = 0; j < DEPTH; j++) {
+            let buff = "";
             for (let i = 0; i < LogicArr.length; i++) {
-                str = str.replaceAll(LogicArr[i][0], LogicArr[i][1]);
-                str = str.replaceAll('(' + LogicArr[i][0] + ')', LogicArr[i][1]);
-                str = str.replaceAll('(1)', '1');
-                str = str.replaceAll('(0)', '0');
+                buff = str.replaceAll(LogicArr[i][0], LogicArr[i][1]);
+                if (buff != str){
+                    str = buff;
+                    step_str += "<br>"+str;
+                }
+                buff = str.replaceAll('(' + LogicArr[i][0] + ')', LogicArr[i][1]);
+                if (buff != str){
+                    str = buff;
+                    step_str += "<br>"+str;
+                }
+                buff = str.replaceAll('(1)', '1');
+                if (buff != str){
+                    str = buff;
+                    //step_str += "<br>"+str;
+                }
+                buff = str.replaceAll('(0)', '0');
+                if (buff != str){
+                    str = buff;
+                    //step_str += "<br>"+str;
+                }
             }
+
         }
         console.log(str);
+        if (!this.detailedOperations){
+            step_str = rep_step;
+        }
         if (str == "1"){
-            return 1;
+            if (this.showSteps){
+                if (this.detailedOperations){
+                    return this.replaceOperationsStr(step_str,this.replaceOperations);
+                } else {
+                    return this.replaceOperationsStr(step_str,this.replaceOperations) + " = "+1;
+                }
+
+            } else {
+                return 1;
+            }
+
         } else if (str == "0"){
-            return 0;
+            if (this.showSteps){
+                if (this.detailedOperations){
+                    return this.replaceOperationsStr(step_str,this.replaceOperations);
+                } else {
+                    return this.replaceOperationsStr(step_str,this.replaceOperations) + " = "+0;
+                }
+            } else {
+                return 0;
+            }
         } else {
-            UI.inputError("Invalid expression format");
+            if (str.length <= 0){
+                UI.inputError("Enter expression firstly");
+            } else {
+                UI.inputError("Invalid expression format");
+            }
             console.log("ERROR");
             return -1;
 
         }
 
+    }
+    replaceOperationsStr(str, t_){
+        let class_ = "";
+        if (this.colorizeSteps){class_ = "text-danger"}
+        if (t_) {
+            str = str.replaceAll(this.dict["EQ"], " <span class="+class_+">EQ</span> ");
+            str = str.replaceAll(this.dict["IMP"], " <span class="+class_+">IMP</span> " );
+            str = str.replaceAll(this.dict["AND"], " <span class="+class_+">AND</span> ");
+            str = str.replaceAll(this.dict["NOT"], " <span class="+class_+">NOT</span>");
+            str = str.replaceAll(this.dict["OR"], " <span class="+class_+">OR</span> ");
+
+        } else {
+            str = str.replaceAll(this.dict["EQ"], "<span class="+class_+">"+` ${this.dict["EQ"]} `+"</span> ");
+            str = str.replaceAll(this.dict["IMP"], "<span class="+class_+">"+` ${this.dict["IMP"]} `+"</span> ");
+            str = str.replaceAll(this.dict["NOT"], "<span class="+class_+">"+` ${this.dict["NOT"]}`+"</span>");
+            str = str.replaceAll(this.dict["OR"], "<span class="+class_+">"+` ${this.dict["OR"]} `+"</span> ");
+            str = str.replaceAll(this.dict["AND"], "<span class="+class_+">"+` ${this.dict["AND"]} `+"</span> ");
+
+        }
+
+        return str;
     }
     replaceLinks(parsed,i){
         let str = parsed[i],
