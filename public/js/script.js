@@ -134,6 +134,8 @@ class UserInterface{
             this.removeClass(navEl,"navbar-dark");
             this.removeClass(navEl,"bg-dark");
             this.addClass(navEl,"navbar-light bg-light");
+
+            document.getElementById("inputExpression").style.color = "#343a40";
             document.getElementById("themeButton").innerHTML = "Dark theme";
             document.body.style.backgroundColor = "white";
         } else {
@@ -144,6 +146,7 @@ class UserInterface{
             this.removeClass(navEl,"navbar-light");
             this.removeClass(navEl,"bg-light");
             this.addClass(navEl,"navbar-dark bg-dark");
+            document.getElementById("inputExpression").style.color = "#f8f9fa";
             document.getElementById("themeButton").innerHTML = "Light theme";
             document.body.style.backgroundColor = "#212529";
         }
@@ -228,7 +231,9 @@ class Core{
         this.showSteps = false;
         this.replaceOperations = false;
         this.letterAlphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P",
-            "Q", "R", "S", "T", "U", "W", "X", "Y", "Z"];
+            "Q", "R", "S", "T", "U", "W", "X", "Y", "Z",
+        "Й","Ц","У","К",,"Е","Н","Г","Ш","Щ","З","Х","Ф","Ы","В","А","П","Р","О","Л","Д","Ж","Э","Я","Ч","С",
+            "М","И","Т","Б","Ю","І","Є"];
         this.alphabet = ["(",")"];
         this.dict = { // safe symbols
             "NOT": "_1",

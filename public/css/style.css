@@ -50,6 +50,13 @@ body{
     float: right!important;
 }
 
+#inputExpression{
+    background: transparent;
+    color: #f8f9fa;
+    border-color: #17a2b8;
+    height: 35px;
+}
+
 #settingsOpenedContainer{
     width: 100%;
 
@@ -89,7 +96,7 @@ body{
 }
 
 .nb{
-    max-width: 100px;
+    max-width: 209px;
 }
 
 
