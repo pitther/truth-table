@@ -63,17 +63,10 @@ class UserInterface{
             document.getElementById("settingsNav").style.display = "block";
             document.getElementById("settingsNav").style.webkitAnimationName = "open";
             document.getElementById("settingsNav").style.webkitAnimationPlayState = "running";
-            //document.getElementById("settingsOpenedContainer").style.display = "block";
-
-            //document.getElementById("settingsOpenedContainer").innerHTML = document.getElementById("settingsClosedContainer").innerHTML;
-
-            //document.getElementById("settingsClosedContainer").innerHTML = "";
-            //document.getElementById("settingsClosedContainer").style.display = "none";
 
             document.getElementById("stepsButton").style.display = "";
             document.getElementById("replaceOperationsButton").style.display = "";
             document.getElementById("colorizeOperationsButton").style.display = "";
-           // document.getElementById("detailedOperationsButton").style.display = "";
         } else {
             document.getElementById("settingsNav").style.webkitAnimationName = "close";
             document.getElementById("settingsNav").style.webkitAnimationPlayState = "running";
@@ -81,17 +74,6 @@ class UserInterface{
             setTimeout(function () {
                 document.getElementById("settingsNav").style.display = "none";
             },200);
-            //document.getElementById("settingsOpenedContainer").style.display = "block";
-            //document.getElementById("settingsClosedContainer").style.display = "block";
-            //document.getElementById("settingsClosedContainer").innerHTML = document.getElementById("settingsOpenedContainer").innerHTML;
-
-            //document.getElementById("settingsOpenedContainer").innerHTML = "";
-
-
-            //document.getElementById("stepsButton").style.display = "none";
-            //document.getElementById("replaceOperationsButton").style.display = "none";
-            //document.getElementById("colorizeOperationsButton").style.display = "none";
-            //document.getElementById("detailedOperationsButton").style.display = "none";
         }
     }
     clickOperations(operationEL){
@@ -129,15 +111,11 @@ class UserInterface{
         this.onMakeTable();
         if (CORE.showSteps){
             document.getElementById("stepsButton").innerHTML = "Hide steps";
-            //document.getElementById("replaceOperationsButton").disabled = false;
-            //document.getElementById("replaceOperationsButton").style.display = "";
-            //document.getElementById("colorizeOperationsButton").style.display = "";
+
             document.getElementById("detailedOperationsButton").style.display = "";
         } else {
             document.getElementById("stepsButton").innerHTML = "Show steps";
-            //document.getElementById("replaceOperationsButton").disabled = true;
-            //document.getElementById("replaceOperationsButton").style.display = "none";
-            //document.getElementById("colorizeOperationsButton").style.display = "none";
+
             document.getElementById("detailedOperationsButton").style.display = "none";
 
         }
@@ -271,7 +249,6 @@ class Core{
             this.alphabet = this.alphabet.concat(this.varDict[operation]);
         }
 
-
         //this.alphabet.push(this.dict["OR"],this.dict["AND"],this.dict["EQ"],this.dict["IMP"],this.dict["NOT"]);
         this.alphabet = this.alphabet.concat(this.letterAlphabet);
     }
@@ -366,12 +343,10 @@ class Core{
                 buff = str.replaceAll('(1)', '1');
                 if (buff != str){
                     str = buff;
-                    //step_str += "<br>"+str;
                 }
                 buff = str.replaceAll('(0)', '0');
                 if (buff != str){
                     str = buff;
-                    //step_str += "<br>"+str;
                 }
             }
 
@@ -410,7 +385,6 @@ class Core{
                 reason += "<br><br><b style='cursor: pointer' onclick='UI.onHint()'>Click here to see proper formating</b>";
                 UI.inputError(reason);
             }
-            console.log("ERROR");
             return -1;
 
         }

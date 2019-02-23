@@ -18,7 +18,7 @@ body{
 }
 
 .opers{
-    font-size: 15px;
+    font-size: 14px;
     margin-right: 1px;
 }
 
@@ -31,7 +31,7 @@ body{
 }
 
 #inputExpression{
-    width: 300px;
+    width: 320px;
 }
 
 .navbar-collapse.collapse {
@@ -78,6 +78,18 @@ body{
 @keyframes close {
     from {display:block; opacity: 1;}
     to {opacity: 0;}
+}
+
+#EQ{
+    /*margin-right: 10px;*/
+}
+
+.lbrb{
+    display: inline-block;
+}
+
+.nb{
+    max-width: 100px;
 }
 
 
