@@ -5,6 +5,10 @@ String.prototype.replaceAll = function(search, replacement) {
     return target.split(search).join(replacement);
 };
 
+String.prototype.splice = function(start, delCount, newSubStr) {
+    return this.slice(0, start) + newSubStr + this.slice(start + Math.abs(delCount));
+};
+
 
 class UserInterface{
     constructor() {
@@ -55,16 +59,60 @@ class UserInterface{
     onCustomization(){
         this.castomization = !this.castomization;
         if (this.castomization){
+
+            document.getElementById("settingsNav").style.display = "block";
+            document.getElementById("settingsNav").style.webkitAnimationName = "open";
+            document.getElementById("settingsNav").style.webkitAnimationPlayState = "running";
+            //document.getElementById("settingsOpenedContainer").style.display = "block";
+
+            //document.getElementById("settingsOpenedContainer").innerHTML = document.getElementById("settingsClosedContainer").innerHTML;
+
+            //document.getElementById("settingsClosedContainer").innerHTML = "";
+            //document.getElementById("settingsClosedContainer").style.display = "none";
+
             document.getElementById("stepsButton").style.display = "";
             document.getElementById("replaceOperationsButton").style.display = "";
             document.getElementById("colorizeOperationsButton").style.display = "";
            // document.getElementById("detailedOperationsButton").style.display = "";
         } else {
-            document.getElementById("stepsButton").style.display = "none";
-            document.getElementById("replaceOperationsButton").style.display = "none";
-            document.getElementById("colorizeOperationsButton").style.display = "none";
-            document.getElementById("detailedOperationsButton").style.display = "none";
+            document.getElementById("settingsNav").style.webkitAnimationName = "close";
+            document.getElementById("settingsNav").style.webkitAnimationPlayState = "running";
+
+            setTimeout(function () {
+                document.getElementById("settingsNav").style.display = "none";
+            },200);
+            //document.getElementById("settingsOpenedContainer").style.display = "block";
+            //document.getElementById("settingsClosedContainer").style.display = "block";
+            //document.getElementById("settingsClosedContainer").innerHTML = document.getElementById("settingsOpenedContainer").innerHTML;
+
+            //document.getElementById("settingsOpenedContainer").innerHTML = "";
+
+
+            //document.getElementById("stepsButton").style.display = "none";
+            //document.getElementById("replaceOperationsButton").style.display = "none";
+            //document.getElementById("colorizeOperationsButton").style.display = "none";
+            //document.getElementById("detailedOperationsButton").style.display = "none";
         }
+    }
+    clickOperations(operationEL){
+        let inpExpEl = document.getElementById("inputExpression"),
+            innerHTML = operationEL.innerHTML;
+        if (innerHTML == "CLR"){
+            inpExpEl.value = "";
+            return;
+        }
+        let operation;
+        if (innerHTML == "(" || innerHTML == ")"){
+            operation = innerHTML;
+        } else {
+            operation = CORE.varDict[innerHTML][0];
+        }
+        inpExpEl.focus();
+        let curpos = inpExpEl.selectionStart;
+        let res = inpExpEl.value.splice(curpos,0,operation);
+        inpExpEl.value = res; //
+        setCaretPosition("inputExpression",curpos+operation.length);
+        this.onMakeTable();
     }
     onReplaceOperations(){
         CORE.replaceOperations = !CORE.replaceOperations;
@@ -97,14 +145,24 @@ class UserInterface{
     }
     onChangeTheme(){
         let navEl = document.getElementById("nav");
+        let setEl = document.getElementById("settingsNav");
         let tableEl = document.getElementById("table");
         if ( navEl.className.indexOf("dark") > -1) {
+
+            this.removeClass(setEl,"navbar-dark");
+            this.removeClass(setEl,"bg-dark");
+            this.addClass(setEl,"navbar-light bg-light");
+
             this.removeClass(navEl,"navbar-dark");
             this.removeClass(navEl,"bg-dark");
             this.addClass(navEl,"navbar-light bg-light");
             document.getElementById("themeButton").innerHTML = "Dark theme";
             document.body.style.backgroundColor = "white";
         } else {
+            this.removeClass(setEl,"navbar-light");
+            this.removeClass(setEl,"bg-light");
+            this.addClass(setEl,"navbar-dark bg-dark");
+
             this.removeClass(navEl,"navbar-light");
             this.removeClass(navEl,"bg-light");
             this.addClass(navEl,"navbar-dark bg-dark");
@@ -125,21 +183,33 @@ class UserInterface{
             this.removeClass(this.inputTipElement,"is-valid");
         } else {
             this.addClass(this.inputTipElement,"is-valid");
-            let tip = "List of operations:";
+            let tip = "<b>List of operations:</b>";
 
-            tip += "<br><b>"+CORE.dict["NOT"]+"</b> - Negation (NOT)";
-            tip += "<br><b>"+CORE.dict["OR"]+"</b> - Disjunction (OR)";
-            tip += "<br><b>"+CORE.dict["AND"]+"</b> - Conjunction (AND)";
-            tip += "<br><b>"+CORE.dict["IMP"]+"</b> - Implication (IMPLY)";
-            tip += "<br><b>"+CORE.dict["EQ"]+"</b> - Equality (EQ,XNOR)";
+            tip += "<br><b>"+CORE.varDict["NOT"].join(", ")+"</b> - Negation (NOT) ";
+            tip += "<br><b>"+CORE.varDict["AND"].join(", ")+"</b> - Conjunction (AND) ";
+            tip += "<br><b>"+CORE.varDict["OR"].join(", ")+"</b> - Disjunction (OR) ";
+            tip += "<br><b>"+CORE.varDict["IMP"].join(", ")+"</b> - Implication (IMPLY) ";
+            tip += "<br><b>"+CORE.varDict["EQ"].join(", ")+"</b> - Equality (EQ,XNOR) ";
 
-            tip+= "<br><br><b>Use round brackers to set priority!</b>"
+            tip+= "<br><br><b>Use round brackers to set priority!</b>";
 
-            tip += "<br><br>Available characters:<br>"+CORE.alphabet;
+            tip += "<br><br><b>Available characters:</b><br>"+CORE.alphabet;
+            tip += `<br><br><i>Example: (${CORE.varDict["NOT"][0]}A ${CORE.varDict["AND"][0]} B) ${CORE.varDict["IMP"][0]} (A ${CORE.varDict["AND"][0]} C) </i>`
+
+
             document.getElementById("tipDiv").innerHTML = tip;
+
 
         }
 
+    }
+    onInput(input){
+        this.onMakeTable();
+        //input.value = this.parseInput(input.value);
+        //CORE.checkExpression(input.value.toUpperCase());
+    }
+    parseInput(str){
+        return str;
     }
     addClass(ele,cls){
             ele.className += " "+ cls;
@@ -182,22 +252,44 @@ class Core{
         this.letterAlphabet = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P",
             "Q", "R", "S", "T", "U", "W", "X", "Y", "Z"];
         this.alphabet = ["(",")"];
-        this.dict = {
-            "NOT": "!",
-            "OR": "||",
-            "AND": "&&",
-            "IMP": ">>",
-            "EQ": "<>"
+        this.dict = { // safe symbols
+            "NOT": "_1",
+            "OR": "_2",
+            "AND": "_3",
+            "IMP": "_4",
+            "EQ": "_5"
         };
-        this.alphabet.push(this.dict["OR"],this.dict["AND"],this.dict["EQ"],this.dict["IMP"],this.dict["NOT"]);
-        console.log(this.alphabet);
+        this.varDict = {
+            "EQ": ["<->","<>"],
+            "IMP": ["->",">>"],
+            "NOT": ["-","!"],
+            "OR": ["V","||","+"],
+            "AND": ["^","&&","*"]
+        };
+
+        for (let operation in this.varDict){
+            this.alphabet = this.alphabet.concat(this.varDict[operation]);
+        }
+
+
+        //this.alphabet.push(this.dict["OR"],this.dict["AND"],this.dict["EQ"],this.dict["IMP"],this.dict["NOT"]);
         this.alphabet = this.alphabet.concat(this.letterAlphabet);
     }
+    parseInput(str){
+        str = str.toUpperCase();
+        for(var operation in this.varDict){
+            for (let i = 0; i < this.varDict[operation].length; i++){
+                str = str.replaceAll(this.varDict[operation][i], `${this.dict[operation]}`);
+            }
+        }
 
+        return str;
+    }
     proceedExpression(exp){
+
         exp = exp.replace(/\s/g,'');
         if (this.checkExpression(exp).length > 0){return;}
-        console.log("Processing expression: "+exp);
+        exp = this.parseInput(exp);
         let parsed = parse(exp,{brackets: ['()'],
             escape: '\\',
             flat: true});
@@ -208,31 +300,35 @@ class Core{
         this.proceedParsed(parsed, variables, inputCombosArr)
     }
     proceedParsed(parsed, variables, inputCombosArr){
-        console.log(parsed,variables,inputCombosArr);
         let headers = variables,
             body = inputCombosArr;
 
-        for (let i = parsed.length-1; i >= 0; i--){
-            if (headers.indexOf(this.replaceLinks(parsed,i)) > -1){
-                continue;
+        function parsedIterate(i){
+            if (headers.indexOf(CORE.replaceLinks(parsed,i)) > -1){
+                return 0;
             } else {
-                headers.push("<span class=''>"+this.replaceOperationsStr(this.replaceLinks(parsed,i),this.replaceOperations)+"</span>");
+                headers.push("<span class='headers'>"+CORE.replaceOperationsStr(CORE.replaceLinks(parsed,i),CORE.replaceOperations)+"</span>");
             }
 
             for (let j = 0; j < inputCombosArr.length; j++){
-                let res = this.proceedLogicOperation(inputCombosArr[j],this.replaceLinks(parsed,i),variables);
-                if (res == -1){
-                    return;
+                let res = CORE.proceedLogicOperation(inputCombosArr[j],CORE.replaceLinks(parsed,i),variables);
+                if (res === -1){
+                    return -1;
                 }
                 body[j].push(res);
             }
         }
-        console.log(body);
+        for (let i = 1; i < parsed.length; i++){
+            let res = parsedIterate(i);
+            if(res === -1){return;};
+        }
+        let res = parsedIterate(0);
+        if(res === -1){return;};
+
         UI.generateTableHead(headers);
         UI.generateTableBody(body);
     }
     proceedLogicOperation(input,str,variables) {
-        console.log(input, str);
 
         for (let i = 0; i < str.length; i++) {
             for (let j = 0; j < variables.length; j++) {
@@ -242,15 +338,15 @@ class Core{
                 }
             }
         }
-        console.log(str);
+
         let step_str = str,
             rep_step = str;
         let LogicArr = [
             [this.dict["NOT"]+"1", 0], [this.dict["NOT"]+"0", 1],
-            ["1"+this.dict["OR"]+"1", 1], ["1"+this.dict["OR"]+"0", 1], ["0"+this.dict["OR"]+"1", 1], ["0"+this.dict["OR"]+"0", 0],
             ["1"+this.dict["AND"]+"1", 1], ["1"+this.dict["AND"]+"0", 0], ["0"+this.dict["AND"]+"1", 0], ["0"+this.dict["AND"]+"0", 0],
-            ["1"+this.dict["EQ"]+"1", 1], ["1"+this.dict["EQ"]+"0", 0], ["0"+this.dict["EQ"]+"1", 0], ["0"+this.dict["EQ"]+"0", 1],
-            ["1"+this.dict["IMP"]+"1", 1], ["1"+this.dict["IMP"]+"0", 0], ["0"+this.dict["IMP"]+"1", 1], ["0"+this.dict["IMP"]+"0", 1]
+            ["1"+this.dict["OR"]+"1", 1], ["1"+this.dict["OR"]+"0", 1], ["0"+this.dict["OR"]+"1", 1], ["0"+this.dict["OR"]+"0", 0],
+            ["1"+this.dict["IMP"]+"1", 1], ["1"+this.dict["IMP"]+"0", 0], ["0"+this.dict["IMP"]+"1", 1], ["0"+this.dict["IMP"]+"0", 1],
+            ["1"+this.dict["EQ"]+"1", 1], ["1"+this.dict["EQ"]+"0", 0], ["0"+this.dict["EQ"]+"1", 0], ["0"+this.dict["EQ"]+"0", 1]
         ];
 
         let DEPTH = 20;
@@ -280,7 +376,7 @@ class Core{
             }
 
         }
-        console.log(str);
+
         if (!this.detailedOperations){
             step_str = rep_step;
         }
@@ -310,7 +406,9 @@ class Core{
             if (str.length <= 0){
                 UI.inputError("Enter expression firstly");
             } else {
-                UI.inputError("Invalid expression format");
+                let reason = "Invalid expression format";
+                reason += "<br><br><b style='cursor: pointer' onclick='UI.onHint()'>Click here to see proper formating</b>";
+                UI.inputError(reason);
             }
             console.log("ERROR");
             return -1;
@@ -322,19 +420,23 @@ class Core{
         let class_ = "";
         if (this.colorizeSteps){class_ = "text-danger"}
         if (t_) {
-            str = str.replaceAll(this.dict["EQ"], " <span class="+class_+">EQ</span> ");
-            str = str.replaceAll(this.dict["IMP"], " <span class="+class_+">IMP</span> " );
-            str = str.replaceAll(this.dict["AND"], " <span class="+class_+">AND</span> ");
-            str = str.replaceAll(this.dict["NOT"], " <span class="+class_+">NOT</span>");
-            str = str.replaceAll(this.dict["OR"], " <span class="+class_+">OR</span> ");
+            for (let operation in this.dict){
+                if (operation == "NOT"){
+                    str = str.replaceAll(this.dict[operation], " <span class="+class_+">"+operation+"</span>");
+                } else {
+                    str = str.replaceAll(this.dict[operation], " <span class="+class_+">"+operation+"</span> ");
+                }
+
+            }
 
         } else {
-            str = str.replaceAll(this.dict["EQ"], "<span class="+class_+">"+` ${this.dict["EQ"]} `+"</span> ");
-            str = str.replaceAll(this.dict["IMP"], "<span class="+class_+">"+` ${this.dict["IMP"]} `+"</span> ");
-            str = str.replaceAll(this.dict["NOT"], "<span class="+class_+">"+` ${this.dict["NOT"]}`+"</span>");
-            str = str.replaceAll(this.dict["OR"], "<span class="+class_+">"+` ${this.dict["OR"]} `+"</span> ");
-            str = str.replaceAll(this.dict["AND"], "<span class="+class_+">"+` ${this.dict["AND"]} `+"</span> ");
-
+            for (let operation in this.dict){
+                if (operation == "NOT"){
+                    str = str.replaceAll(this.dict[operation], "<span class="+class_+">"+` ${this.varDict[operation][0]}`+"</span>");
+                } else {
+                    str = str.replaceAll(this.dict[operation], "<span class="+class_+">"+` ${this.varDict[operation][0]} `+"</span> ");
+                }
+            }
         }
 
         return str;
@@ -347,7 +449,7 @@ class Core{
             for (let i = 0; i < parsed.length; i++) {
                 if (str.indexOf('\\' + i) > -1) {
                     replaced_ = true;
-                    str = str.replace('\\' + i, parsed[i]);
+                    str = str.replace('\\' + i, ''+parsed[i]+'');
                 }
             }
             if (!replaced_){
@@ -355,6 +457,7 @@ class Core{
                 break;
             }
         }
+
         return str;
     }
     binaryCombos(n){
@@ -386,12 +489,12 @@ class Core{
                 exp = exp.replace(this.alphabet[i],"");
             }
         }
-        console.log(exp);
         if (exp.length > 0){
             let chars = exp;
             chars = chars.split("");
             let reason = "Unexpected characters: "+chars;
             reason += "<br>Acceptable characters: "+CORE.alphabet;
+            reason += "<br><br><b style='cursor: pointer' onclick='UI.onHint()'>Click here to see proper formating</b>";
             UI.inputError(reason);
             return exp;
         } else {
@@ -404,6 +507,25 @@ class Core{
 window.onload = function () {
     UI = new UserInterface();
     CORE = new Core();
+};
 
-    };
+function setCaretPosition(elemId, caretPos) {
+    var elem = document.getElementById(elemId);
+
+    if(elem != null) {
+        if(elem.createTextRange) {
+            var range = elem.createTextRange();
+            range.move('character', caretPos);
+            range.select();
+        }
+        else {
+            if(elem.selectionStart) {
+                elem.focus();
+                elem.setSelectionRange(caretPos, caretPos);
+            }
+            else
+                elem.focus();
+        }
+    }
+}
 
