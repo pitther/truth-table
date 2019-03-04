@@ -29,16 +29,23 @@
         <input  autocomplete="off" style="" oninput="UI.onInput(this)"  id="inputExpression" class="form-control mr-sm-2" placeholder="Enter expression" aria-label="Make table">
         <div id="invalidReasonDiv" class="invalid-tooltip"></div>
         <div class="oper-container">
-            <button id="NOT" class="btn btn-outline-info  my-2 my-sm-0  opers" onclick="UI.clickOperations(this)">NOT</button>
-            <button id="AND" class="btn btn-outline-info  my-2 my-sm-0  opers" onclick="UI.clickOperations(this)">AND</button>
-            <button id="OR" class="btn btn-outline-info  my-2 my-sm-0  opers" onclick="UI.clickOperations(this)">OR</button>
-            <button id="IMPLY" class="btn btn-outline-info  my-2 my-sm-0  opers" onclick="UI.clickOperations(this)">IMP</button>
-            <button id="EQ" class="btn btn-outline-info my-2 my-sm-0   opers" onclick="UI.clickOperations(this)">EQ</button>
-            <div class="lbrb">
-                <button id="lb" class="btn btn-outline-primary my-2 my-sm-0   opers" onclick="UI.clickOperations(this)">(</button>
-                <button id="rb" class="btn btn-outline-primary my-2 my-sm-0   opers" onclick="UI.clickOperations(this)">)</button>
-                <button id="CLR" class="btn btn-outline-danger my-2 my-sm-0   opers" onclick="UI.clickOperations(this)">CLR</button>
+            <div class="additional">
+                <button id="NOT" class="btn btn-outline-info  my-2 my-sm-0  opers" onclick="UI.clickOperations(this)">NOT</button>
+                <button id="AND" class="btn btn-outline-info  my-2 my-sm-0  opers" onclick="UI.clickOperations(this)">AND</button>
+                <button id="OR" class="btn btn-outline-info  my-2 my-sm-0  opers" onclick="UI.clickOperations(this)">OR</button>
+                <button id="IMPLY" class="btn btn-outline-info  my-2 my-sm-0  opers" onclick="UI.clickOperations(this)">IMP</button>
+                <button id="EQ" class="btn btn-outline-info my-2 my-sm-0   opers" onclick="UI.clickOperations(this)">EQ</button>
+                <br>
+                <button id="XOR" class="btn btn-outline-info my-2 my-sm-0   opers" onclick="UI.clickOperations(this)">XOR</button>
+                <button id="NAND" class="btn btn-outline-info my-2 my-sm-0   opers" onclick="UI.clickOperations(this)">NAND</button>
+                <button id="NOR" class="btn btn-outline-info my-2 my-sm-0   opers" onclick="UI.clickOperations(this)">NOR</button>
+                <div class="lbrb">
+                    <button id="lb" class="btn btn-outline-primary my-2 my-sm-0   opers" onclick="UI.clickOperations(this)">(</button>
+                    <button id="rb" class="btn btn-outline-primary my-2 my-sm-0   opers" onclick="UI.clickOperations(this)">)</button>
+                    <button id="CLR" class="btn btn-outline-danger my-2 my-sm-0   opers" onclick="UI.clickOperations(this)">CLR</button>
+                </div>
             </div>
+
         </div>
             <!--button class="btn btn-outline-success my-2 my-sm-0" onclick="UI.onMakeTable()">Make table</button-->
     </form>
@@ -46,7 +53,7 @@
     <form class="form-inline " action="javascript:void(0);">
         <input id="tipInput" style="display: none" class="form-control mr-sm-2">
         <div id="tipDiv" class="valid-tooltip">123</div>
-        <button class="btn btn-outline-info my-2 my-sm-0 sets" onclick="UI.onHint()">?</button>
+        <button class="btn btn-outline-info my-2 my-sm-0 sets" id="qmark" onclick="UI.onHint()">?</button>
         <button style="" id="customizationButton" class="btn btn-outline-warning my-2 my-sm-0 sets" onclick="UI.onCustomization()">Settings</button>
 
         <button id="themeButton" class="btn btn-outline-info my-2 my-sm-0" onclick="UI.onChangeTheme()">Light theme</button>

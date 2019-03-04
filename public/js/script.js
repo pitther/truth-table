@@ -9,7 +9,6 @@ String.prototype.splice = function(start, delCount, newSubStr) {
     return this.slice(0, start) + newSubStr + this.slice(start + Math.abs(delCount));
 };
 
-
 class UserInterface{
     constructor() {
         this.castomization = false;
@@ -106,20 +105,15 @@ class UserInterface{
         }
     }
     onViewSteps(){
-
         CORE.showSteps = !CORE.showSteps;
         this.onMakeTable();
         if (CORE.showSteps){
             document.getElementById("stepsButton").innerHTML = "Hide steps";
-
             document.getElementById("detailedOperationsButton").style.display = "";
         } else {
             document.getElementById("stepsButton").innerHTML = "Show steps";
-
             document.getElementById("detailedOperationsButton").style.display = "none";
-
         }
-
     }
     onChangeTheme(){
         let navEl = document.getElementById("nav");
@@ -171,6 +165,9 @@ class UserInterface{
             tip += "<br><b>"+CORE.varDict["OR"].join(", ")+"</b> - Disjunction (OR) ";
             tip += "<br><b>"+CORE.varDict["IMP"].join(", ")+"</b> - Implication (IMPLY) ";
             tip += "<br><b>"+CORE.varDict["EQ"].join(", ")+"</b> - Equality (EQ,XNOR) ";
+            tip += "<br><b>"+CORE.varDict["XOR"].join(", ")+"</b> - Exclusive or (XOR) ";
+            tip += "<br><b>"+CORE.varDict["NAND"].join(", ")+"</b> - Sheffer stroke or (NAND) ";
+            tip += "<br><b>"+CORE.varDict["NOR"].join(", ")+"</b> - Logical NOR (NOR) ";
 
             tip+= "<br><br><b>Use round brackers to set priority!</b>";
 
@@ -237,17 +234,23 @@ class Core{
         this.alphabet = ["(",")"];
         this.dict = { // safe symbols
             "NOT": "_1",
+            "NOR": "_8",
+            "XOR":"_6",
             "OR": "_2",
             "AND": "_3",
             "IMP": "_4",
-            "EQ": "_5"
+            "EQ": "_5",
+            "NAND" : "_7",
         };
         this.varDict = {
-            "EQ": ["<->","<>"],
-            "IMP": ["->",">>"],
-            "NOT": ["-","!"],
-            "OR": ["V","||","+"],
-            "AND": ["^","&&","*"]
+            "EQ": ["<->","<>","EQ"],
+            "IMP": ["->",">>","IMP"],
+            "NOT": ["-","!","NOT"],
+            "XOR": ["0","XOR"],
+            "NOR": ["NOR"],
+            "OR": ["V","||","+","OR"],
+            "AND": ["^","&&","*","AND"],
+            "NAND": ["|","NAND"]
         };
 
         for (let operation in this.varDict){
@@ -328,7 +331,10 @@ class Core{
             ["1"+this.dict["AND"]+"1", 1], ["1"+this.dict["AND"]+"0", 0], ["0"+this.dict["AND"]+"1", 0], ["0"+this.dict["AND"]+"0", 0],
             ["1"+this.dict["OR"]+"1", 1], ["1"+this.dict["OR"]+"0", 1], ["0"+this.dict["OR"]+"1", 1], ["0"+this.dict["OR"]+"0", 0],
             ["1"+this.dict["IMP"]+"1", 1], ["1"+this.dict["IMP"]+"0", 0], ["0"+this.dict["IMP"]+"1", 1], ["0"+this.dict["IMP"]+"0", 1],
-            ["1"+this.dict["EQ"]+"1", 1], ["1"+this.dict["EQ"]+"0", 0], ["0"+this.dict["EQ"]+"1", 0], ["0"+this.dict["EQ"]+"0", 1]
+            ["1"+this.dict["EQ"]+"1", 1], ["1"+this.dict["EQ"]+"0", 0], ["0"+this.dict["EQ"]+"1", 0], ["0"+this.dict["EQ"]+"0", 1],
+            ["1"+this.dict["XOR"]+"1", 0], ["1"+this.dict["XOR"]+"0",1], ["0"+this.dict["XOR"]+"1", 1], ["0"+this.dict["XOR"]+"0", 0],
+            ["1"+this.dict["NAND"]+"1", 0], ["1"+this.dict["NAND"]+"0",1], ["0"+this.dict["NAND"]+"1", 1], ["0"+this.dict["NAND"]+"0", 1],
+            ["1"+this.dict["NOR"]+"1", 0], ["1"+this.dict["NOR"]+"0",0], ["0"+this.dict["NOR"]+"1", 0], ["0"+this.dict["NOR"]+"0", 1]
         ];
 
         let DEPTH = 20;

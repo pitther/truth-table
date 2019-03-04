@@ -17,10 +17,6 @@ body{
     margin-right: 10px;
 }
 
-.opers{
-    font-size: 14px;
-    margin-right: 1px;
-}
 
 .oper-container{
 
@@ -63,7 +59,8 @@ body{
 }
 
 #nav{
-    padding: 0.5rem 0rem;
+    padding: 5px;
+    padding-bottom: 10px;
 }
 
 #settingsNav{
@@ -99,6 +96,34 @@ body{
     max-width: 209px;
 }
 
+#invalidReasonDiv{
+    max-width: 400px;
+}
+
+#tipDiv{
+    max-width: 400px;
+}
+
+.additional{
+    display: block;
+    max-width: 400px;
+    height: 30px;
+}
 
 
+.opers{
+
+    width: 59.9px;
+    height: 30px;
+    padding: 0;
+
+    float: left;
+    margin-right: 5px;
+    margin-top: 5px  !important;
+    margin-bottom: 0px  !important;
+}
+
+#lb, #rb{
+    width: 27px;
+}
 
