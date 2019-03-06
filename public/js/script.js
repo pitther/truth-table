@@ -75,6 +75,12 @@ class UserInterface{
             },200);
         }
     }
+    onInput(input){
+        let inpExpEl = document.getElementById("inputExpression");
+        let curpos = inpExpEl.selectionStart;
+        this.onMakeTable();
+        setCaretPosition("inputExpression",curpos);
+    }
     clickOperations(operationEL){
         let inpExpEl = document.getElementById("inputExpression"),
             innerHTML = operationEL.innerHTML;
@@ -166,7 +172,7 @@ class UserInterface{
             tip += "<br><b>"+CORE.varDict["IMP"].join(", ")+"</b> - Implication (IMPLY) ";
             tip += "<br><b>"+CORE.varDict["EQ"].join(", ")+"</b> - Equality (EQ,XNOR) ";
             tip += "<br><b>"+CORE.varDict["XOR"].join(", ")+"</b> - Exclusive or (XOR) ";
-            tip += "<br><b>"+CORE.varDict["NAND"].join(", ")+"</b> - Sheffer stroke or (NAND) ";
+            tip += "<br><b>"+CORE.varDict["NAND"].join(", ")+"</b> - Sheffer stroke (NAND) ";
             tip += "<br><b>"+CORE.varDict["NOR"].join(", ")+"</b> - Logical NOR (NOR) ";
 
             tip+= "<br><br><b>Use round brackers to set priority!</b>";
@@ -181,11 +187,7 @@ class UserInterface{
         }
 
     }
-    onInput(input){
-        this.onMakeTable();
-        //input.value = this.parseInput(input.value);
-        //CORE.checkExpression(input.value.toUpperCase());
-    }
+
     parseInput(str){
         return str;
     }
